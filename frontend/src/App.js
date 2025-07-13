@@ -222,6 +222,53 @@ function App() {
     }
   };
 
+  const manageUserApiKey = async (email, apiKey, action = 'set') => {
+    setIsManagingApiKey(true);
+    try {
+      await axios.post(
+        `${API_BASE_URL}/api/admin/user-api-key`,
+        { 
+          email: email,
+          api_key: apiKey,
+          action: action
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      
+      alert(`API key ${action === 'remove' ? 'removed from' : 'updated for'} ${email}`);
+      if (action === 'set') {
+        setUserApiKeyEmail('');
+        setUserApiKey('');
+      }
+      fetchUsers(); // Refresh the user list
+      
+    } catch (error) {
+      console.error('Failed to manage user API key:', error);
+      alert('Failed to manage user API key.');
+    } finally {
+      setIsManagingApiKey(false);
+    }
+  };
+
+  const handleAssignApiKey = () => {
+    if (!userApiKeyEmail.trim() || !userApiKey.trim()) {
+      alert('Please enter both email and API key');
+      return;
+    }
+    manageUserApiKey(userApiKeyEmail.trim(), userApiKey.trim(), 'set');
+  };
+
+  const handleRemoveApiKey = (email) => {
+    if (window.confirm(`Are you sure you want to remove the API key for ${email}?`)) {
+      manageUserApiKey(email, '', 'remove');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
