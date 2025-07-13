@@ -350,43 +350,65 @@ async def get_admin_stats(current_user: dict = Depends(get_current_user)):
         logger.error(f"Admin stats error: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to get statistics")
 
-@app.post("/api/admin/manage-admin")
-async def manage_admin_access(
+@app.post("/api/admin/user-api-key")
+async def manage_user_api_key(
     request: dict,
     current_user: dict = Depends(get_current_user)
 ):
-    """Add or remove admin access for a user (super admin only)"""
+    """Assign, update, or remove API key for a specific user (admin only)"""
     if not current_user.get('is_admin'):
         raise HTTPException(status_code=403, detail="Admin access required")
     
     try:
         email = request.get('email')
-        action = request.get('action')  # 'add' or 'remove'
+        api_key = request.get('api_key')  # Can be empty string to remove
+        action = request.get('action', 'set')  # 'set' or 'remove'
         
-        if not email or action not in ['add', 'remove']:
-            raise HTTPException(status_code=400, detail="Invalid email or action")
+        if not email:
+            raise HTTPException(status_code=400, detail="Email is required")
         
-        # Update user in database
-        if action == 'add':
+        # Find user by email
+        user = users_collection.find_one({"email": email})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        if action == 'remove' or not api_key:
+            # Remove API key
             users_collection.update_one(
                 {"email": email},
-                {"$set": {"is_admin": True}},
-                upsert=False
+                {"$unset": {"api_key": ""}}
             )
-            message = f"Admin access granted to {email}"
+            message = f"API key removed for {email}"
         else:
+            # Set/update API key
             users_collection.update_one(
                 {"email": email},
-                {"$set": {"is_admin": False}},
-                upsert=False
+                {"$set": {"api_key": api_key}}
             )
-            message = f"Admin access removed from {email}"
+            message = f"API key updated for {email}"
         
         return {"message": message}
         
     except Exception as e:
-        logger.error(f"Manage admin error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to manage admin access")
+        logger.error(f"Manage user API key error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to manage user API key")
+
+@app.get("/api/user/api-key-status")
+async def get_user_api_key_status(current_user: dict = Depends(get_current_user)):
+    """Get current user's API key status"""
+    try:
+        user_id = current_user['user_id']
+        api_key_info = get_user_api_key(user_id)
+        
+        return {
+            "has_api_key": api_key_info is not None,
+            "api_key_source": api_key_info['source'] if api_key_info else None,
+            "has_personal_key": bool(current_user.get('api_key'))
+        }
+        
+    except Exception as e:
+        logger.error(f"Get API key status error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to get API key status")
 
 if __name__ == "__main__":
     import uvicorn
