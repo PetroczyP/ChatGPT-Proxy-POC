@@ -159,6 +159,27 @@ class ChatGPTAPITester:
         )
         return success
 
+    def test_admin_user_api_key_without_auth(self):
+        """Test admin user-api-key endpoint without authentication"""
+        success, response = self.run_test(
+            "Admin User API Key (No Auth)",
+            "POST",
+            "api/admin/user-api-key",
+            403,  # FastAPI HTTPBearer returns 403
+            data={"email": "test@example.com", "api_key": "test-key", "action": "set"}
+        )
+        return success
+
+    def test_user_api_key_status_without_auth(self):
+        """Test user api-key-status endpoint without authentication"""
+        success, response = self.run_test(
+            "User API Key Status (No Auth)",
+            "GET",
+            "api/user/api-key-status",
+            403  # FastAPI HTTPBearer returns 403
+        )
+        return success
+
     def test_invalid_endpoints(self):
         """Test invalid endpoints"""
         success, response = self.run_test(
