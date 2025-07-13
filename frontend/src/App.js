@@ -430,38 +430,75 @@ function App() {
                 {users.length > 0 ? (
                   <div className="space-y-2">
                     {users.map((user, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border">
                         <div className="flex items-center space-x-4">
                           <img 
                             src={user.picture} 
                             alt={user.name}
-                            className="w-10 h-10 rounded-full"
+                            className="w-12 h-12 rounded-full"
                           />
                           <div className="flex-1">
-                            <p className="font-medium text-gray-800">{user.name}</p>
+                            <div className="flex items-center space-x-2">
+                              <p className="font-medium text-gray-800">{user.name}</p>
+                              {user.is_admin && (
+                                <span className="inline-block px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full">
+                                  Admin
+                                </span>
+                              )}
+                            </div>
                             <p className="text-sm text-gray-600">{user.email}</p>
-                            {user.is_admin && (
-                              <span className="inline-block px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full mt-1">
-                                Admin
-                              </span>
-                            )}
+                            <div className="flex items-center space-x-2 mt-1">
+                              {user.has_personal_key ? (
+                                <span className="inline-block px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                                  Personal API Key
+                                </span>
+                              ) : user.has_api_key ? (
+                                <span className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                                  {user.api_key_source === 'default_admin' ? 'Default Key' : 'Environment Key'}
+                                </span>
+                              ) : (
+                                <span className="inline-block px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
+                                  No API Key
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <div className="text-right">
-                            <p className="text-sm text-gray-500">
-                              {new Date(user.last_login).toLocaleDateString()}
-                            </p>
+                          <div className="text-right text-sm text-gray-500">
+                            <p>{new Date(user.last_login).toLocaleDateString()}</p>
                           </div>
-                          {user.is_admin && user.email !== adminStats?.admin_email && (
-                            <button
-                              onClick={() => handleRemoveAdmin(user.email)}
-                              disabled={isManagingAdmin}
-                              className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600 transition-colors disabled:opacity-50"
-                            >
-                              Remove Admin
-                            </button>
-                          )}
+                          <div className="flex flex-col space-y-1">
+                            {user.has_personal_key ? (
+                              <button
+                                onClick={() => handleRemoveApiKey(user.email)}
+                                disabled={isManagingApiKey}
+                                className="bg-orange-500 text-white px-3 py-1 rounded text-xs hover:bg-orange-600 transition-colors disabled:opacity-50"
+                              >
+                                Remove Key
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => {
+                                  setUserApiKeyEmail(user.email);
+                                  document.getElementById('api-key-input').focus();
+                                }}
+                                disabled={isManagingApiKey}
+                                className="bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600 transition-colors disabled:opacity-50"
+                              >
+                                Assign Key
+                              </button>
+                            )}
+                            {user.is_admin && user.email !== adminStats?.admin_email && (
+                              <button
+                                onClick={() => handleRemoveAdmin(user.email)}
+                                disabled={isManagingAdmin}
+                                className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600 transition-colors disabled:opacity-50"
+                              >
+                                Remove Admin
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}
