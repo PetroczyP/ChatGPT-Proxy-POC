@@ -509,6 +509,40 @@ function App() {
               </div>
             </div>
 
+            {/* Assign API Key to User Section */}
+            <div className="border-t pt-6 mt-6">
+              <h3 className="text-lg font-medium text-gray-800 mb-4">Assign API Key to User</h3>
+              <div className="space-y-3">
+                <input
+                  type="email"
+                  placeholder="User email"
+                  value={userApiKeyEmail}
+                  onChange={(e) => setUserApiKeyEmail(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  disabled={isManagingApiKey}
+                />
+                <input
+                  id="api-key-input"
+                  type="password"
+                  placeholder="OpenAI API Key for this user"
+                  value={userApiKey}
+                  onChange={(e) => setUserApiKey(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  disabled={isManagingApiKey}
+                />
+                <button
+                  onClick={handleAssignApiKey}
+                  disabled={isManagingApiKey || !userApiKeyEmail.trim() || !userApiKey.trim()}
+                  className="w-full bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isManagingApiKey ? 'Processing...' : 'Assign API Key'}
+                </button>
+              </div>
+              <p className="text-sm text-gray-600 mt-2">
+                Assign a personal OpenAI API key to a specific user. This will override any default keys.
+              </p>
+            </div>
+
             {/* Add Admin Section */}
             <div className="border-t pt-6 mt-6">
               <h3 className="text-lg font-medium text-gray-800 mb-4">Manage Admin Access</h3>
