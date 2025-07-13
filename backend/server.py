@@ -214,9 +214,14 @@ async def send_message(
         user_id = current_user['user_id']
         
         # Get user's API key
-        api_key = get_user_api_key(user_id)
-        if not api_key:
-            raise HTTPException(status_code=400, detail="No API key configured")
+        api_key_info = get_user_api_key(user_id)
+        if not api_key_info:
+            raise HTTPException(
+                status_code=400, 
+                detail="No ChatGPT API key configured for your account. Please contact your administrator to configure an API key."
+            )
+        
+        api_key = api_key_info['key']
         
         # Create chat session
         session_id = f"chat_{user_id}_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
@@ -237,18 +242,22 @@ async def send_message(
             "session_id": session_id,
             "user_message": message.message,
             "assistant_response": response,
-            "timestamp": datetime.utcnow()
+            "timestamp": datetime.utcnow(),
+            "api_key_source": api_key_info['source']
         }
         chats_collection.insert_one(chat_record)
         
         return {
             "response": response,
             "session_id": session_id,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.utcnow().isoformat(),
+            "api_key_source": api_key_info['source']
         }
         
     except Exception as e:
         logger.error(f"Chat error: {str(e)}")
+        if "No ChatGPT API key configured" in str(e):
+            raise e
         raise HTTPException(status_code=500, detail=f"Chat failed: {str(e)}")
 
 @app.get("/api/chat/history")
