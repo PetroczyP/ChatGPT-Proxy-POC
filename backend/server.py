@@ -29,6 +29,7 @@ DB_NAME = os.environ.get('DB_NAME', 'test_database')
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+ADMIN_EMAILS = os.environ.get('ADMIN_EMAILS', '').split(',') if os.environ.get('ADMIN_EMAILS') else []
 
 # Initialize FastAPI app
 app = FastAPI(title="ChatGPT Web Application", version="1.0.0")
