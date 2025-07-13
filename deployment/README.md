@@ -37,8 +37,11 @@ chmod +x deployment/gcloud-setup.sh
 
 ### 2.2 Update Connection String
 ```bash
-# Example connection string:
-mongodb+srv://username:password@cluster0.mongodb.net/chatgpt-app
+# EXAMPLE connection string format (replace with your actual values):
+# mongodb+srv://YOUR_USERNAME:YOUR_PASSWORD@YOUR_CLUSTER.mongodb.net/chatgpt-app
+
+# Your actual connection string will look like:
+# mongodb+srv://myuser:mypassword@mycluster.abc123.mongodb.net/chatgpt-app
 ```
 
 ## Step 3: OAuth Configuration
