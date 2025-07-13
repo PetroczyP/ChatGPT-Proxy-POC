@@ -30,18 +30,31 @@ GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 ADMIN_EMAILS = os.environ.get('ADMIN_EMAILS', '').split(',') if os.environ.get('ADMIN_EMAILS') else []
+ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development')
 
 # Initialize FastAPI app
 app = FastAPI(title="ChatGPT Web Application", version="1.0.0")
 
-# Add CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Configure CORS for production
+if ENVIRONMENT == 'production':
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[
+            "https://*.run.app",  # Cloud Run domains
+            "https://*.yourdomain.com",  # Your custom domain
+        ],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+else:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 # Add session middleware
 app.add_middleware(SessionMiddleware, secret_key="your-secret-key-here")
