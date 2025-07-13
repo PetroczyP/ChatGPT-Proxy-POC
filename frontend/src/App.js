@@ -388,6 +388,9 @@ function App() {
             
             <div className="border-t pt-6">
               <h3 className="text-lg font-medium text-gray-800 mb-4">Configure API Key</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Configure OpenAI API keys. Leave user email empty to set a default key for all users.
+            </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
                   type="password"
