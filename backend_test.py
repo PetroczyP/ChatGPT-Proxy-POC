@@ -208,6 +208,8 @@ def main():
         tester.test_admin_stats_without_auth,
         tester.test_admin_users_without_auth,
         tester.test_admin_configure_without_auth,
+        tester.test_admin_manage_admin_without_auth,
+        tester.test_admin_manage_admin_invalid_data,
         tester.test_chat_history_without_auth,
         tester.test_invalid_endpoints,
         tester.test_cors_headers
