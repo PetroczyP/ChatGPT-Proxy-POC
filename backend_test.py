@@ -81,7 +81,7 @@ class ChatGPTAPITester:
             "User Profile (No Auth)",
             "GET",
             "api/user/profile",
-            401  # Should return unauthorized
+            403  # FastAPI HTTPBearer returns 403
         )
         return success
 
@@ -91,7 +91,7 @@ class ChatGPTAPITester:
             "Chat (No Auth)",
             "POST",
             "api/chat",
-            401,  # Should return unauthorized
+            403,  # FastAPI HTTPBearer returns 403
             data={"message": "Hello"}
         )
         return success
@@ -102,7 +102,7 @@ class ChatGPTAPITester:
             "Admin Stats (No Auth)",
             "GET",
             "api/admin/stats",
-            401  # Should return unauthorized
+            403  # FastAPI HTTPBearer returns 403
         )
         return success
 
@@ -112,7 +112,7 @@ class ChatGPTAPITester:
             "Admin Users (No Auth)",
             "GET",
             "api/admin/users",
-            401  # Should return unauthorized
+            403  # FastAPI HTTPBearer returns 403
         )
         return success
 
@@ -122,7 +122,7 @@ class ChatGPTAPITester:
             "Admin Configure (No Auth)",
             "POST",
             "api/admin/configure",
-            401,  # Should return unauthorized
+            403,  # FastAPI HTTPBearer returns 403
             data={"openai_key": "test-key"}
         )
         return success
@@ -133,7 +133,7 @@ class ChatGPTAPITester:
             "Chat History (No Auth)",
             "GET",
             "api/chat/history",
-            401  # Should return unauthorized
+            403  # FastAPI HTTPBearer returns 403
         )
         return success
 
