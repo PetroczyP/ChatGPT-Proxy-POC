@@ -92,9 +92,9 @@ gcloud run domain-mappings create \
 
 ### 6.1 Set up Secret Manager
 ```bash
-# Store sensitive data in Secret Manager
-echo "your-openai-api-key" | gcloud secrets create openai-api-key --data-file=-
-echo "your-google-client-secret" | gcloud secrets create google-client-secret --data-file=-
+# Store sensitive data in Secret Manager (replace with your actual keys)
+echo "YOUR_ACTUAL_OPENAI_API_KEY" | gcloud secrets create openai-api-key --data-file=-
+echo "YOUR_ACTUAL_GOOGLE_CLIENT_SECRET" | gcloud secrets create google-client-secret --data-file=-
 
 # Update Cloud Run to use secrets
 gcloud run services update chatgpt-backend \
