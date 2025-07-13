@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7
+    container_name: chatgpt-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: chatgpt_app
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - chatgpt-network
+
+  # Backend API
+  backend:
+    build:
+      context: .
+      dockerfile: deployment/Dockerfile.backend
+    container_name: chatgpt-backend
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    environment:
+      - MONGO_URL=mongodb://admin:password@mongodb:27017
+      - DB_NAME=chatgpt_app
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ADMIN_EMAILS=${ADMIN_EMAILS}
+      - ENVIRONMENT=development
+    depends_on:
+      - mongodb
+    networks:
+      - chatgpt-network
+
+  # Frontend App
+  frontend:
+    build:
+      context: .
+      dockerfile: deployment/Dockerfile.frontend
+    container_name: chatgpt-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:8080"
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:8001
+      - REACT_APP_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+    depends_on:
+      - backend
+    networks:
+      - chatgpt-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  chatgpt-network:
+    driver: bridge
