@@ -69,9 +69,9 @@ chmod +x deployment/deploy.sh
 
 ### 4.3 Set Environment Variables
 ```bash
-# Set backend environment variables
+# Set backend environment variables (replace with your actual values)
 gcloud run services update chatgpt-backend \
-  --set-env-vars="MONGO_URL=your-mongodb-connection-string,DB_NAME=chatgpt_production,GOOGLE_CLIENT_ID=your-client-id,GOOGLE_CLIENT_SECRET=your-client-secret,OPENAI_API_KEY=your-openai-key,ADMIN_EMAILS=admin@yourdomain.com" \
+  --set-env-vars="MONGO_URL=YOUR_MONGODB_CONNECTION_STRING,DB_NAME=chatgpt_production,GOOGLE_CLIENT_ID=YOUR_CLIENT_ID,GOOGLE_CLIENT_SECRET=YOUR_CLIENT_SECRET,OPENAI_API_KEY=YOUR_OPENAI_KEY,ADMIN_EMAILS=admin@yourdomain.com" \
   --region=us-central1
 ```
 
