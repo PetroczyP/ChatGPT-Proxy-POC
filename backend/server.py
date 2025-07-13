@@ -33,7 +33,7 @@ ADMIN_EMAILS = os.environ.get('ADMIN_EMAILS', '').split(',') if os.environ.get('
 ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development')
 
 # Initialize FastAPI app
-app = FastAPI(title="ChatGPT Web Application", version="1.0.0")
+app = FastAPI(title="ChatGPT Proxy POC Application", version="1.0.0")
 
 # Configure CORS for production
 if ENVIRONMENT == 'production':
