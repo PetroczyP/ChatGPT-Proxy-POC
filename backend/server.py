@@ -157,7 +157,7 @@ async def google_auth(request: Request):
             'email': user_info['email'],
             'name': user_info['name'],
             'picture': user_info['picture'],
-            'is_admin': user_info['email'] == 'admin@example.com',  # Set admin email
+            'is_admin': user_info['email'].lower() in [email.lower().strip() for email in ADMIN_EMAILS],
             'created_at': datetime.utcnow(),
             'last_login': datetime.utcnow()
         }
