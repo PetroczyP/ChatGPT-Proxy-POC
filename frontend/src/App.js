@@ -174,6 +174,51 @@ function App() {
     }
   };
 
+  const manageAdminAccess = async (email, action) => {
+    setIsManagingAdmin(true);
+    try {
+      await axios.post(
+        `${API_BASE_URL}/api/admin/manage-admin`,
+        { 
+          email: email,
+          action: action
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      
+      alert(`Admin access ${action === 'add' ? 'granted to' : 'removed from'} ${email}`);
+      if (action === 'add') {
+        setNewAdminEmail('');
+      }
+      fetchUsers(); // Refresh the user list
+      
+    } catch (error) {
+      console.error('Failed to manage admin access:', error);
+      alert('Failed to manage admin access.');
+    } finally {
+      setIsManagingAdmin(false);
+    }
+  };
+
+  const handleAddAdmin = () => {
+    if (!newAdminEmail.trim()) {
+      alert('Please enter a valid email address');
+      return;
+    }
+    manageAdminAccess(newAdminEmail.trim(), 'add');
+  };
+
+  const handleRemoveAdmin = (email) => {
+    if (window.confirm(`Are you sure you want to remove admin access from ${email}?`)) {
+      manageAdminAccess(email, 'remove');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
