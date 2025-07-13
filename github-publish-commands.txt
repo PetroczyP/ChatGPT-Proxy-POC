@@ -1,0 +1,11 @@
+# GitHub Publishing Commands for PetroczyP
+# Copy and paste these commands in your terminal/command prompt
+
+# Navigate to your project directory (if not already there)
+cd /app
+
+# Add your GitHub repository
+git remote add origin https://github.com/PetroczyP/chatgpt-proxy-poc.git
+
+# Push to GitHub
+git push -u origin main
