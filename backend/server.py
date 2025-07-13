@@ -410,6 +410,44 @@ async def get_user_api_key_status(current_user: dict = Depends(get_current_user)
         logger.error(f"Get API key status error: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to get API key status")
 
+@app.post("/api/admin/manage-admin")
+async def manage_admin_access(
+    request: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Add or remove admin access for a user (super admin only)"""
+    if not current_user.get('is_admin'):
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    try:
+        email = request.get('email')
+        action = request.get('action')  # 'add' or 'remove'
+        
+        if not email or action not in ['add', 'remove']:
+            raise HTTPException(status_code=400, detail="Invalid email or action")
+        
+        # Update user in database
+        if action == 'add':
+            users_collection.update_one(
+                {"email": email},
+                {"$set": {"is_admin": True}},
+                upsert=False
+            )
+            message = f"Admin access granted to {email}"
+        else:
+            users_collection.update_one(
+                {"email": email},
+                {"$set": {"is_admin": False}},
+                upsert=False
+            )
+            message = f"Admin access removed from {email}"
+        
+        return {"message": message}
+        
+    except Exception as e:
+        logger.error(f"Manage admin error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to manage admin access")
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
