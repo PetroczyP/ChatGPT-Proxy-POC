@@ -310,12 +310,20 @@ async def configure_api_key(
 
 @app.get("/api/admin/users")
 async def get_users(current_user: dict = Depends(get_current_user)):
-    """Get all users (admin only)"""
+    """Get all users with API key status (admin only)"""
     if not current_user.get('is_admin'):
         raise HTTPException(status_code=403, detail="Admin access required")
     
     try:
-        users = list(users_collection.find({}, {"_id": 0, "api_key": 0}))
+        users = list(users_collection.find({}, {"_id": 0}))
+        
+        # Add API key status to each user
+        for user in users:
+            api_key_info = get_user_api_key(user['user_id'])
+            user['has_api_key'] = api_key_info is not None
+            user['api_key_source'] = api_key_info['source'] if api_key_info else None
+            user['has_personal_key'] = bool(user.get('api_key'))
+        
         return {"users": users}
         
     except Exception as e:
