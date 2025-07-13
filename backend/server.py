@@ -136,7 +136,7 @@ async def google_login(request: Request):
         logger.error(f"Google login error: {str(e)}")
         raise HTTPException(status_code=500, detail="Login failed")
 
-@app.get("/api/auth/google")
+@app.get("/auth/google")
 async def google_auth(request: Request):
     """Handle Google OAuth callback"""
     try:
@@ -174,7 +174,7 @@ async def google_auth(request: Request):
         jwt_token = create_jwt_token(user_data)
         
         # Redirect to frontend with token
-        frontend_url = request.headers.get('origin', 'http://localhost:3000')
+        frontend_url = "https://248cf560-4be9-4bc2-bc7a-19f6b0adaa19.preview.emergentagent.com"
         return RedirectResponse(
             url=f"{frontend_url}?token={jwt_token}",
             status_code=302
