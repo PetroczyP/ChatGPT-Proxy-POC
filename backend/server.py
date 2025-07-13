@@ -129,7 +129,8 @@ async def root():
 async def google_login(request: Request):
     """Initiate Google OAuth login"""
     try:
-        redirect_uri = f"{request.base_url}api/auth/google"
+        # Use the frontend URL as the redirect URI
+        redirect_uri = "https://248cf560-4be9-4bc2-bc7a-19f6b0adaa19.preview.emergentagent.com/auth/google"
         return await oauth.google.authorize_redirect(request, redirect_uri)
     except Exception as e:
         logger.error(f"Google login error: {str(e)}")
