@@ -116,14 +116,18 @@ def get_user_api_key(user_id: str):
     """Get user's assigned API key"""
     user = users_collection.find_one({"user_id": user_id})
     if user and user.get('api_key'):
-        return user['api_key']
+        return {'key': user['api_key'], 'source': 'user_specific'}
     
     # Check for default admin key
     admin_config = admin_collection.find_one({"type": "default"})
-    if admin_config:
-        return admin_config.get('api_key', OPENAI_API_KEY)
+    if admin_config and admin_config.get('api_key'):
+        return {'key': admin_config.get('api_key'), 'source': 'default_admin'}
     
-    return OPENAI_API_KEY
+    # Fallback to environment variable
+    if OPENAI_API_KEY:
+        return {'key': OPENAI_API_KEY, 'source': 'environment'}
+    
+    return None  # No API key available
 
 # Routes
 @app.get("/")
