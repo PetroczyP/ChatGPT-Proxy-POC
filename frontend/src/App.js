@@ -17,6 +17,8 @@ function App() {
   const [userEmail, setUserEmail] = useState('');
   const [users, setUsers] = useState([]);
   const [adminStats, setAdminStats] = useState(null);
+  const [newAdminEmail, setNewAdminEmail] = useState('');
+  const [isManagingAdmin, setIsManagingAdmin] = useState(false);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
