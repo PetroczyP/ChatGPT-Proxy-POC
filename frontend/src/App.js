@@ -134,9 +134,15 @@ function App() {
 
     } catch (error) {
       console.error('Failed to send message:', error);
+      let errorMessage = 'Sorry, something went wrong. Please try again.';
+      
+      if (error.response?.status === 400 && error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      }
+      
       setMessages(prev => [...prev, {
         type: 'error',
-        content: 'Sorry, something went wrong. Please try again.',
+        content: errorMessage,
         timestamp: new Date().toISOString()
       }]);
     } finally {
