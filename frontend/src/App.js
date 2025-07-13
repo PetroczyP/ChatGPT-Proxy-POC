@@ -377,20 +377,38 @@ function App() {
                 {users.length > 0 ? (
                   <div className="space-y-2">
                     {users.map((user, index) => (
-                      <div key={index} className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-                        <img 
-                          src={user.picture} 
-                          alt={user.name}
-                          className="w-10 h-10 rounded-full"
-                        />
-                        <div className="flex-1">
-                          <p className="font-medium text-gray-800">{user.name}</p>
-                          <p className="text-sm text-gray-600">{user.email}</p>
+                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div className="flex items-center space-x-4">
+                          <img 
+                            src={user.picture} 
+                            alt={user.name}
+                            className="w-10 h-10 rounded-full"
+                          />
+                          <div className="flex-1">
+                            <p className="font-medium text-gray-800">{user.name}</p>
+                            <p className="text-sm text-gray-600">{user.email}</p>
+                            {user.is_admin && (
+                              <span className="inline-block px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full mt-1">
+                                Admin
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-sm text-gray-500">
-                            {new Date(user.last_login).toLocaleDateString()}
-                          </p>
+                        <div className="flex items-center space-x-2">
+                          <div className="text-right">
+                            <p className="text-sm text-gray-500">
+                              {new Date(user.last_login).toLocaleDateString()}
+                            </p>
+                          </div>
+                          {user.is_admin && user.email !== adminStats?.admin_email && (
+                            <button
+                              onClick={() => handleRemoveAdmin(user.email)}
+                              disabled={isManagingAdmin}
+                              className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600 transition-colors disabled:opacity-50"
+                            >
+                              Remove Admin
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -399,6 +417,31 @@ function App() {
                   <p className="text-gray-500 text-center py-4">No users found</p>
                 )}
               </div>
+            </div>
+
+            {/* Add Admin Section */}
+            <div className="border-t pt-6 mt-6">
+              <h3 className="text-lg font-medium text-gray-800 mb-4">Manage Admin Access</h3>
+              <div className="flex space-x-2">
+                <input
+                  type="email"
+                  placeholder="Enter email to grant admin access"
+                  value={newAdminEmail}
+                  onChange={(e) => setNewAdminEmail(e.target.value)}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  disabled={isManagingAdmin}
+                />
+                <button
+                  onClick={handleAddAdmin}
+                  disabled={isManagingAdmin || !newAdminEmail.trim()}
+                  className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isManagingAdmin ? 'Processing...' : 'Add Admin'}
+                </button>
+              </div>
+              <p className="text-sm text-gray-600 mt-2">
+                Grant admin access to users by entering their email address. They must have already signed in at least once.
+              </p>
             </div>
           </div>
         )}
