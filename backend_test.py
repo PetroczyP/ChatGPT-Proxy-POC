@@ -137,6 +137,28 @@ class ChatGPTAPITester:
         )
         return success
 
+    def test_admin_manage_admin_without_auth(self):
+        """Test admin manage-admin endpoint without authentication"""
+        success, response = self.run_test(
+            "Admin Manage Admin (No Auth)",
+            "POST",
+            "api/admin/manage-admin",
+            403,  # FastAPI HTTPBearer returns 403
+            data={"email": "test@example.com", "action": "add"}
+        )
+        return success
+
+    def test_admin_manage_admin_invalid_data(self):
+        """Test admin manage-admin endpoint with invalid data (no auth needed for this test)"""
+        success, response = self.run_test(
+            "Admin Manage Admin (Invalid Data - No Auth)",
+            "POST",
+            "api/admin/manage-admin",
+            403,  # Will fail at auth level first
+            data={"invalid": "data"}
+        )
+        return success
+
     def test_invalid_endpoints(self):
         """Test invalid endpoints"""
         success, response = self.run_test(
