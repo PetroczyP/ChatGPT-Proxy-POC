@@ -145,7 +145,7 @@ def get_user_api_key(user_id: str):
 # Routes
 @app.get("/")
 async def root():
-    return {"message": "ChatGPT Web Application API"}
+    return {"message": "ChatGPT Proxy POC Application API"}
 
 @app.get("/api/login/google")
 async def google_login(request: Request):
