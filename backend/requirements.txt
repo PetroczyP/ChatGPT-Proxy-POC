@@ -24,5 +24,5 @@ python-multipart>=0.0.9
 jq>=1.6.0
 typer>=0.9.0
 authlib>=1.6.0
-emergentintegrations>=0.1.0
+openai>=1.12.0
 itsdangerous>=2.1.0
