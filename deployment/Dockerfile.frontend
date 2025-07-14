@@ -2,17 +2,20 @@
 # Using exact Node.js version for consistency with local environment
 FROM node:20.19.3-slim as build
 
+# Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy package files from frontend directory
 COPY frontend/package.json frontend/yarn.lock ./
 
 # Clean yarn cache and install dependencies (bypass frozen-lockfile Docker issue)
 RUN yarn cache clean
 RUN yarn install --production=false
 
-# Copy source code
-COPY frontend/ .
+# Copy all frontend source code while preserving directory structure
+COPY frontend/src ./src
+COPY frontend/public ./public
+COPY frontend/tailwind.config.js frontend/postcss.config.js frontend/craco.config.js ./
 
 # Build the app
 RUN yarn build
