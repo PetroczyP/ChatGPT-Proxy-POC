@@ -238,7 +238,7 @@ async def send_message(
         
         # Create chat session
         session_id = f"chat_{user_id}_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
-        client = OpenAI(api_key=api_key)
+        client = AsyncOpenAI(api_key=api_key)
         
         # Send message
         chat_completion = await client.chat.completions.create(
