@@ -29,6 +29,14 @@ steps:
       - '--region'
       - 'us-central1'
       - '--allow-unauthenticated'
+      - '--set-env-vars'
+      - 'ENVIRONMENT=production'
+      - '--memory'
+      - '1Gi'
+      - '--cpu'
+      - '1'
+      - '--max-instances'
+      - '10'
 
   # Build frontend
   - name: 'gcr.io/cloud-builders/docker'
@@ -59,6 +67,12 @@ steps:
       - '--region'
       - 'us-central1'
       - '--allow-unauthenticated'
+      - '--memory'
+      - '512Mi'
+      - '--cpu'
+      - '1'
+      - '--max-instances'
+      - '10'
 
 images:
   - 'gcr.io/$PROJECT_ID/chatgpt-backend'
