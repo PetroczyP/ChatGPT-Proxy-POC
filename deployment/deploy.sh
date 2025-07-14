@@ -4,8 +4,8 @@
 set -e
 
 # Configuration
-PROJECT_ID="your-chatgpt-app"  # Update this
-REGION="us-central1"           # Update this
+PROJECT_ID="emergent-poc"      # Your actual project ID
+REGION="us-central1"           # Update this if you prefer different region
 BACKEND_SERVICE="chatgpt-backend"
 FRONTEND_SERVICE="chatgpt-frontend"
 
