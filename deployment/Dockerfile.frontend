@@ -15,7 +15,7 @@ RUN yarn install --production=false
 # Copy all frontend source code while preserving directory structure
 COPY frontend/src ./src
 COPY frontend/public ./public
-COPY frontend/.env frontend/tailwind.config.js frontend/postcss.config.js frontend/craco.config.js ./
+COPY frontend/tailwind.config.js frontend/postcss.config.js frontend/craco.config.js ./
 
 # Build the app
 RUN yarn build
