@@ -197,9 +197,8 @@ async def google_auth(request: Request):
         jwt_token = create_jwt_token(user_data)
         
         # Redirect to frontend with token
-        frontend_url = "https://2e51ad72-7b0f-492c-a172-3771d8f293ac.preview.emergentagent.com"
         return RedirectResponse(
-            url=f"{frontend_url}?token={jwt_token}",
+            url=f"{FRONTEND_URL}?token={jwt_token}",
             status_code=302
         )
         
