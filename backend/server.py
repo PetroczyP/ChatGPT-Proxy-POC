@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
 from authlib.integrations.starlette_client import OAuth
-from openai import OpenAI
+from openai import OpenAI, AsyncOpenAI
 from pymongo import MongoClient
 from pydantic import BaseModel
 from typing import Optional, List
