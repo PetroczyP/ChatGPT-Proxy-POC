@@ -3,7 +3,10 @@ import sys
 import json
 import jwt
 import uuid
+import os
+import re
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
 
 class ChatGPTAPITester:
     def __init__(self, base_url="https://2e51ad72-7b0f-492c-a172-3771d8f293ac.preview.emergentagent.com"):
@@ -15,6 +18,9 @@ class ChatGPTAPITester:
         self.test_user_id = str(uuid.uuid4())
         self.test_admin_email = "admin@test.com"
         self.test_user_email = "user@test.com"
+        
+        # Load environment variables for testing
+        load_dotenv('/app/backend/.env')
 
     def run_test(self, name, method, endpoint, expected_status, data=None, headers=None):
         """Run a single API test"""
