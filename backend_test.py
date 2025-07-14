@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 
 class ChatGPTAPITester:
-    def __init__(self, base_url="https://248cf560-4be9-4bc2-bc7a-19f6b0adaa19.preview.emergentagent.com"):
+    def __init__(self, base_url="https://2e51ad72-7b0f-492c-a172-3771d8f293ac.preview.emergentagent.com"):
         self.base_url = base_url
         self.token = None
         self.tests_run = 0
