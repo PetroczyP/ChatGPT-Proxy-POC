@@ -39,7 +39,9 @@ class ChatGPTAPITester:
         
         try:
             if method == 'GET':
-                response = self.session.get(url, headers=test_headers, timeout=10)
+                # Handle redirect control for GET requests
+                allow_redirects = headers.get('allow_redirects', 'true') != 'false'
+                response = self.session.get(url, headers=test_headers, timeout=10, allow_redirects=allow_redirects)
             elif method == 'POST':
                 response = self.session.post(url, json=data, headers=test_headers, timeout=10)
             elif method == 'PUT':
