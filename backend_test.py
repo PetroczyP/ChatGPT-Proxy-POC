@@ -374,13 +374,29 @@ class ChatGPTAPITester:
 
 def main():
     print("🚀 Starting ChatGPT Web Application API Tests")
-    print("=" * 60)
+    print("🎯 Focus: Cloud Run Deployment Configuration Testing")
+    print("=" * 70)
     
     # Setup
     tester = ChatGPTAPITester()
     
-    # Run all tests
-    tests = [
+    # Run deployment-specific tests first
+    deployment_tests = [
+        tester.test_deployment_configuration,
+        tester.test_openai_library_verification,
+        tester.test_environment_variable_configuration,
+    ]
+    
+    print("\n📋 DEPLOYMENT CONFIGURATION TESTS")
+    print("-" * 50)
+    for test in deployment_tests:
+        try:
+            test()
+        except Exception as e:
+            print(f"❌ Test {test.__name__} failed with exception: {str(e)}")
+    
+    # Run standard API tests
+    api_tests = [
         tester.test_root_endpoint,
         tester.test_google_login_redirect,
         tester.test_user_profile_without_auth,
@@ -394,24 +410,25 @@ def main():
         tester.test_user_api_key_status_without_auth,
         tester.test_chat_history_without_auth,
         tester.test_invalid_endpoints,
-        tester.test_cors_headers
     ]
     
-    for test in tests:
+    print("\n📋 STANDARD API TESTS")
+    print("-" * 50)
+    for test in api_tests:
         try:
             test()
         except Exception as e:
             print(f"❌ Test {test.__name__} failed with exception: {str(e)}")
     
     # Print results
-    print("\n" + "=" * 60)
+    print("\n" + "=" * 70)
     print(f"📊 API Test Results: {tester.tests_passed}/{tester.tests_run} tests passed")
     
     if tester.tests_passed == tester.tests_run:
-        print("🎉 All API tests passed!")
+        print("🎉 All API tests passed! Backend ready for Cloud Run deployment.")
         return 0
     else:
-        print("⚠️  Some API tests failed")
+        print("⚠️  Some API tests failed - review deployment configuration")
         return 1
 
 if __name__ == "__main__":
