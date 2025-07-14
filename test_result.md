@@ -155,6 +155,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ VERIFIED: Google OAuth authentication working correctly. Login redirect to Google OAuth is functional (302 redirect to accounts.google.com). JWT token authentication working with database user lookup. User profile endpoint returns correct user data."
+      - working: true
+        agent: "testing"
+        comment: "✅ DYNAMIC URL CONFIGURATION VERIFIED: OAuth redirect correctly uses FRONTEND_URL environment variable. Redirect URI properly constructed for Cloud Run deployment. All OAuth endpoints responding correctly with proper status codes."
 
   - task: "Admin API key management"
     implemented: true
