@@ -1,12 +1,15 @@
 # Frontend Dockerfile for Google Cloud Run
-# Using Node.js 20 LTS with slim variant for production optimization
-FROM node:20-slim as build
+# Using exact Node.js version for consistency with local environment
+FROM node:20.19.3-slim as build
 
 WORKDIR /app
 
 # Copy package files
 COPY frontend/package.json frontend/yarn.lock ./
-RUN yarn install --frozen-lockfile
+
+# Clean yarn cache and install dependencies (bypass frozen-lockfile Docker issue)
+RUN yarn cache clean
+RUN yarn install --production=false
 
 # Copy source code
 COPY frontend/ .
