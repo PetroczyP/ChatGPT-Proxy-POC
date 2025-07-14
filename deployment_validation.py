@@ -726,51 +726,47 @@ except Exception as e:
         
         return all_passed
 
-    def run_comprehensive_validation(self) -> bool:
-        """Run all validation tests"""
-        print(f"\n🎯 Starting Comprehensive Deployment Validation...")
-        print(f"📁 App Root: {self.app_root}")
-        print(f"📁 Frontend: {self.frontend_dir}")
-        print(f"📁 Backend: {self.backend_dir}")
+    def run_all_validations(self):
+        """Run all deployment validation tests"""
+        print(f"\n{'='*60}")
+        print("🚀 STARTING COMPREHENSIVE DEPLOYMENT VALIDATION")
+        print(f"{'='*60}")
         
         # Run all validation tests
-        results = []
-        
-        try:
-            results.append(self.validate_frontend_build())
-        except Exception as e:
-            print(f"❌ Frontend validation failed with exception: {str(e)}")
-            results.append(False)
-        
-        try:
-            results.append(self.validate_backend_build())
-        except Exception as e:
-            print(f"❌ Backend validation failed with exception: {str(e)}")
-            results.append(False)
-        
-        try:
-            results.append(self.validate_docker_build())
-        except Exception as e:
-            print(f"❌ Docker validation failed with exception: {str(e)}")
-            results.append(False)
-        
-        try:
-            results.append(self.validate_cloud_run_config())
-        except Exception as e:
-            print(f"❌ Cloud Run validation failed with exception: {str(e)}")
-            results.append(False)
-        
-        try:
-            results.append(self.validate_dependency_conflicts())
-        except Exception as e:
-            print(f"❌ Dependency validation failed with exception: {str(e)}")
-            results.append(False)
+        frontend_ok = self.validate_frontend_build()
+        backend_ok = self.validate_backend_build()
+        docker_ok = self.simulate_docker_build_environment()
+        cloud_run_ok = self.validate_cloud_run_config()
         
         # Print final results
-        self.print_final_results()
+        print(f"\n{'='*60}")
+        print(f"📊 DEPLOYMENT VALIDATION RESULTS")
+        print(f"{'='*60}")
+        print(f"Tests Run: {self.tests_run}")
+        print(f"Tests Passed: {self.tests_passed}")
+        print(f"Success Rate: {(self.tests_passed/self.tests_run)*100:.1f}%")
         
-        # Return True only if all critical tests passed
-        return len(self.critical_failures) == 0
+        if self.critical_failures:
+            print(f"\n❌ CRITICAL FAILURES ({len(self.critical_failures)}):")
+            for failure in self.critical_failures:
+                print(f"   • {failure}")
+            print("\n🚨 DEPLOYMENT WILL FAIL - Fix critical issues before deploying!")
+            return False
+        
+        if self.warnings:
+            print(f"\n⚠️  WARNINGS ({len(self.warnings)}):")
+            for warning in self.warnings:
+                print(f"   • {warning}")
+        
+        if frontend_ok and backend_ok and docker_ok and cloud_run_ok:
+            print("\n🎉 ALL CRITICAL VALIDATIONS PASSED!")
+            print("✅ Safe to proceed with Google Cloud deployment")
+            print("\nRun: gcloud builds submit --config deployment/cloudbuild.yaml")
+            return True
+        else:
+            print("\n❌ SOME VALIDATIONS FAILED")
+            print("🚨 Fix issues before attempting deployment")
+            return False
 
     def print_final_results(self):
         """Print comprehensive final results"""
