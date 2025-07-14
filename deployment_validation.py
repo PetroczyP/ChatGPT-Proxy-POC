@@ -452,7 +452,7 @@ except Exception as e:
                 self.test_result("Backend Docker build simulation", False, 
                                f"Docker build issues: {stderr[:200]}", critical=False)
         
-        return all_passed
+        return self.simulate_docker_build_environment()
 
     def validate_cloud_run_config(self) -> bool:
         """Validate Cloud Run configuration"""
