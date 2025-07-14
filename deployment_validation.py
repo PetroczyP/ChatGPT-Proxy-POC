@@ -93,7 +93,37 @@ class DeploymentValidator:
         
         self.test_result("Package.json exists", True)
         
-        # Test 2: Yarn.lock synchronization check
+        # Test 2: CRITICAL - Check for packageManager field that causes Docker build failures
+        print("\n🚨 Testing PackageManager Field (Critical for Docker builds)...")
+        try:
+            with open(package_json, 'r') as f:
+                package_data = json.load(f)
+            
+            if 'packageManager' in package_data:
+                package_manager = package_data['packageManager']
+                self.test_result("PackageManager field check", False, 
+                               f"packageManager field '{package_manager}' will cause Docker build failures. Remove this field from package.json", critical=True)
+                all_passed = False
+            else:
+                self.test_result("PackageManager field check", True, "No packageManager field - Docker builds will work")
+        except Exception as e:
+            self.test_result("PackageManager field check", False, f"Error reading package.json: {e}", critical=True)
+            all_passed = False
+        
+        # Test 3: JSON syntax validation
+        print("\n📝 Testing Package.json Syntax...")
+        try:
+            with open(package_json, 'r') as f:
+                json.load(f)
+            self.test_result("Package.json syntax", True, "Valid JSON syntax")
+        except json.JSONDecodeError as e:
+            self.test_result("Package.json syntax", False, f"Invalid JSON: {e}", critical=True)
+            all_passed = False
+        except Exception as e:
+            self.test_result("Package.json syntax", False, f"Error reading file: {e}", critical=True)
+            all_passed = False
+        
+        # Test 4: Yarn.lock synchronization check
         print("\n📦 Testing Yarn.lock Synchronization...")
         yarn_lock = self.frontend_dir / "yarn.lock"
         
@@ -116,6 +146,27 @@ class DeploymentValidator:
                 self.test_result("Frozen lockfile test", False, 
                                f"yarn.lock out of sync: {stderr[:200]}", critical=True)
                 all_passed = False
+        
+        # Test 5: Check for duplicate yarn.lock files (another source of build failures)
+        print("\n🔍 Testing for Duplicate Yarn.lock Files...")
+        yarn_lock_files = []
+        for root, dirs, files in os.walk(self.app_root):
+            # Skip node_modules directories
+            if 'node_modules' in root:
+                continue
+            if 'yarn.lock' in files:
+                yarn_lock_files.append(os.path.join(root, 'yarn.lock'))
+        
+        if len(yarn_lock_files) == 1 and yarn_lock_files[0] == str(self.frontend_dir / "yarn.lock"):
+            self.test_result("Duplicate yarn.lock check", True, "Only one yarn.lock file found in correct location")
+        elif len(yarn_lock_files) > 1:
+            self.test_result("Duplicate yarn.lock check", False, 
+                           f"Multiple yarn.lock files found: {yarn_lock_files}. Remove extras to prevent Docker build confusion.", critical=True)
+            all_passed = False
+        else:
+            self.test_result("Duplicate yarn.lock check", False, 
+                           f"Unexpected yarn.lock configuration: {yarn_lock_files}", critical=True)
+            all_passed = False
         
         # Test 3: Dependency resolution check
         print("\n🔍 Testing Dependency Resolution...")
