@@ -454,6 +454,96 @@ except Exception as e:
         
         return self.simulate_docker_build_environment()
 
+    def simulate_docker_build_environment(self) -> bool:
+        """Simulate Docker build environment to catch platform-specific issues"""
+        print("\n🔍 DOCKER BUILD ENVIRONMENT SIMULATION")
+        print("-" * 40)
+        
+        all_passed = True
+        
+        # Test 1: Simulate Docker's copy operation and yarn install
+        print("\n🐳 Simulating Docker COPY and yarn install...")
+        
+        # Create a temporary directory to simulate Docker build context
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+            
+            try:
+                # Copy package.json and yarn.lock as Docker would
+                shutil.copy2(self.frontend_dir / "package.json", temp_path / "package.json")
+                shutil.copy2(self.frontend_dir / "yarn.lock", temp_path / "yarn.lock")
+                
+                # Test yarn install --frozen-lockfile in isolated environment
+                success, stdout, stderr = self.run_command(
+                    ["yarn", "install", "--frozen-lockfile"],
+                    cwd=temp_path,
+                    timeout=300
+                )
+                
+                if success:
+                    self.test_result("Docker build simulation", True, "yarn install --frozen-lockfile works in isolated environment")
+                else:
+                    # Check for specific error patterns that indicate deployment issues
+                    if "lockfile needs to be updated" in stderr:
+                        self.test_result("Docker build simulation", False, 
+                                       "CRITICAL: yarn.lock synchronization issue detected - this will cause Docker build failure", critical=True)
+                        all_passed = False
+                    elif "packageManager" in stderr.lower():
+                        self.test_result("Docker build simulation", False, 
+                                       "CRITICAL: packageManager field issue detected - remove from package.json", critical=True)
+                        all_passed = False
+                    else:
+                        self.test_result("Docker build simulation", False, 
+                                       f"Docker build simulation failed: {stderr[:300]}", critical=True)
+                        all_passed = False
+                
+            except Exception as e:
+                self.test_result("Docker build simulation", False, 
+                               f"Failed to simulate Docker environment: {e}", critical=True)
+                all_passed = False
+        
+        # Test 2: Yarn version compatibility check
+        print("\n📦 Testing Yarn Version Compatibility...")
+        success, stdout, stderr = self.run_command(["yarn", "--version"])
+        
+        if success:
+            local_yarn_version = stdout.strip()
+            
+            # Check if package.json has packageManager field
+            try:
+                with open(self.frontend_dir / "package.json", 'r') as f:
+                    package_data = json.load(f)
+                
+                if 'packageManager' in package_data:
+                    package_manager = package_data['packageManager']
+                    if 'yarn@' in package_manager:
+                        required_version = package_manager.split('@')[1].split('+')[0]
+                        if local_yarn_version != required_version:
+                            self.test_result("Yarn version compatibility", False, 
+                                           f"Local yarn {local_yarn_version} != required {required_version}. Remove packageManager field from package.json", critical=True)
+                            all_passed = False
+                        else:
+                            self.test_result("Yarn version compatibility", True, 
+                                           f"Yarn version matches: {local_yarn_version}")
+                    else:
+                        self.test_result("Yarn version compatibility", False, 
+                                       f"Invalid packageManager format: {package_manager}", critical=True)
+                        all_passed = False
+                else:
+                    self.test_result("Yarn version compatibility", True, 
+                                   f"No packageManager field - using system yarn {local_yarn_version}")
+                    
+            except Exception as e:
+                self.test_result("Yarn version compatibility", False, 
+                               f"Error checking package.json: {e}", critical=True)
+                all_passed = False
+        else:
+            self.test_result("Yarn version compatibility", False, 
+                           "Could not determine yarn version", critical=True)
+            all_passed = False
+        
+        return all_passed
+
     def validate_cloud_run_config(self) -> bool:
         """Validate Cloud Run configuration"""
         print("\n🔍 CLOUD RUN CONFIGURATION VALIDATION")
