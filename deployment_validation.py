@@ -809,7 +809,7 @@ def main():
     validator = DeploymentValidator()
     
     try:
-        success = validator.run_comprehensive_validation()
+        success = validator.run_all_validations()
         return 0 if success else 1
     except KeyboardInterrupt:
         print("\n\n⚠️  Validation interrupted by user")
