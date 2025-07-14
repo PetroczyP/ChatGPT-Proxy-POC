@@ -31,6 +31,7 @@ GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 ADMIN_EMAILS = os.environ.get('ADMIN_EMAILS', '').split(',') if os.environ.get('ADMIN_EMAILS') else []
 ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development')
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://2e51ad72-7b0f-492c-a172-3771d8f293ac.preview.emergentagent.com')
 
 # Initialize FastAPI app
 app = FastAPI(title="ChatGPT Proxy POC Application", version="1.0.0")
