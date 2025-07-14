@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
 from authlib.integrations.starlette_client import OAuth
-from emergentintegrations.llm.chat import LlmChat, UserMessage
+from openai import OpenAI
 from pymongo import MongoClient
 from pydantic import BaseModel
 from typing import Optional, List
@@ -238,15 +238,17 @@ async def send_message(
         
         # Create chat session
         session_id = f"chat_{user_id}_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
-        chat = LlmChat(
-            api_key=api_key,
-            session_id=session_id,
-            system_message="You are a helpful assistant."
-        ).with_model("openai", "gpt-4")
+        client = OpenAI(api_key=api_key)
         
         # Send message
-        user_message = UserMessage(text=message.message)
-        response = await chat.send_message(user_message)
+        chat_completion = await client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": message.message}
+            ]
+        )
+        response = chat_completion.choices[0].message.content
         
         # Store chat history
         chat_record = {
