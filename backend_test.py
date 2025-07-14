@@ -82,8 +82,18 @@ class ChatGPTAPITester:
             "Google Login Redirect",
             "GET",
             "api/login/google",
-            302  # Should redirect to Google OAuth
+            302,  # Should redirect to Google OAuth
+            headers={'allow_redirects': 'false'}
         )
+        
+        # Additional check for redirect URL
+        if success and response:
+            location = response.headers.get('location', '')
+            if 'accounts.google.com' in location:
+                print(f"   ✅ Redirect URL contains Google OAuth endpoint")
+            else:
+                print(f"   ⚠️  Redirect URL: {location[:100]}...")
+        
         return success
 
     def test_user_profile_without_auth(self):
