@@ -238,7 +238,7 @@ async def send_message(
         
         # Create chat session
         session_id = f"chat_{user_id}_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
-        client = LlmChat(
+        chat = LlmChat(
             api_key=api_key,
             session_id=session_id,
             system_message="You are a helpful assistant."
@@ -246,7 +246,7 @@ async def send_message(
         
         # Send message
         user_message = UserMessage(text=message.message)
-        response = await client.send_message(user_message)
+        response = await chat.send_message(user_message)
         
         # Store chat history
         chat_record = {
