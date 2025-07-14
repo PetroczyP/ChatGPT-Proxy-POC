@@ -1,9 +1,12 @@
 # Docker configuration for Google Cloud Run deployment
 
-# Backend Dockerfile
-FROM python:3.11-slim
+# Backend Dockerfile - Using Python 3.13 for latest performance improvements
+FROM python:3.13-slim
 
 WORKDIR /app
+
+# Upgrade pip to latest version
+RUN pip install --upgrade pip
 
 # Copy requirements and install dependencies
 COPY backend/requirements.txt .

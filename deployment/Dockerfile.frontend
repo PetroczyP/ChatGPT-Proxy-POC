@@ -1,5 +1,6 @@
 # Frontend Dockerfile for Google Cloud Run
-FROM node:20-alpine as build
+# Using Node.js 20 LTS with slim variant for production optimization
+FROM node:20-slim as build
 
 WORKDIR /app
 
@@ -13,8 +14,8 @@ COPY frontend/ .
 # Build the app
 RUN yarn build
 
-# Production image
-FROM nginx:alpine
+# Production image - using latest nginx alpine
+FROM nginx:1.25-alpine
 
 # Copy built app to nginx
 COPY --from=build /app/build /usr/share/nginx/html
