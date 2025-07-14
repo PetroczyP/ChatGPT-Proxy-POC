@@ -119,6 +119,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ VERIFIED: OpenAI library replacement successful. Tested OpenAI v1.95.1 import and AsyncOpenAI client instantiation. Library change from emergentintegrations to standard OpenAI is working correctly. Deployment blocker resolved."
+      - working: true
+        agent: "testing"
+        comment: "✅ CLOUD RUN DEPLOYMENT VERIFIED: AsyncOpenAI import successful, no deployment blockers. Server can initialize FastAPI app with OpenAI integration. Port configuration (PORT environment variable) working correctly. All deployment-specific tests passed."
   
   - task: "Chat functionality with OpenAI API"
     implemented: true
